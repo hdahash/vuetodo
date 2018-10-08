@@ -48,12 +48,14 @@ export default {
   },
   methods: {
     taskMouseover: function(item) {
+      console.log('mouse over');
       var index = this.list.indexOf(item);
       var temparr = this.list[index];
       temparr[3] = 1;
       this.$set(this.list, index, temparr);
     },
     taskMouseout: function(item) {
+      console.log('mouse out');
       var index = this.list.indexOf(item);
       var temparr = this.list[index];
       temparr[3] = 0;

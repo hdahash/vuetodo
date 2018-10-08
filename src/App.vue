@@ -1,14 +1,16 @@
 <template>
   <div id="app">
     <img width="25%" src="./assets/logo.png">
-    <!--HelloWorld/-->
-    <ToDo :list="list"/>
+    <Todo :datalist="list"/>
+    <p v-if="newItemName">{{ newItemName }}  {{ newItemDueDate }}</p>
+    <label>Task Name</label><input v-model="newItemName">
+  <label>Due Date</label><input v-model="newItemDueDate">
+  <button v-on:click="addNew">Add</button>
   </div>
 </template>
 
 <script>
-//import HelloWorld from "./components/HelloWorld";
-import ToDo from "./components/ToDo";
+import Todo from "./components/Todo";
 import Dexie from "dexie";
 
 var db = new Dexie("Todo");
@@ -22,17 +24,18 @@ db.open();
 export default {
   name: "App",
   components: {
-    //    HelloWorld,
-    ToDo
+    Todo
   },
   data() {
     return {
-      list: []
+      list: [],
+            newItemName:'',
+	newItemDueDate:''
     };
   },
   beforeMount: function() {
     //console.log("before mount");
-    var vueapp = this.vueapp;
+    var vueapp = this;
     db.task.toArray().then(function() {
       return db.task.each(task =>
         vueapp.list.push([task.id, task.name, task.duedate, 0])
@@ -58,16 +61,16 @@ export default {
     },
     addNew: function() {
       //this.list.push(this.newItem);
-      var vueapp = this.vueapp;
+      var vapp = this;
       db.task
         .put({
-          name: vueapp.newItemName,
-          duedate: vueapp.newItemDueDate /*new Date().toLocaleDateString()*/
+          name: vapp.newItemName,
+          duedate: vapp.newItemDueDate /*new Date().toLocaleDateString()*/
         })
         .then(function(id) {
-          vueapp.list.push([id, vueapp.newItemName, vueapp.newItemDueDate, 0]);
-          vueapp.newItemName = "";
-          vueapp.newItemDueDate = "";
+          vapp.list.push([id, vapp.newItemName, vapp.newItemDueDate, 0]);
+          vapp.newItemName = "";
+          vapp.newItemDueDate = "";
         });
     },
     deleteItem: function(item) {

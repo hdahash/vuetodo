@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "dexie": "2.0.4",
-    "fontawesome": "4.7.2",
     "vue": "^2.5.2"
   },
   "devDependencies": {

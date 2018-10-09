@@ -30,10 +30,11 @@ export default {
       msg: "TODO App"
     };
   },
-  methods:{
+  methods: {
     taskMouseover: function(item) {
       //console.log('mouse over');
       var index = this.datalist.indexOf(item);
+      this.$parent.currentItem = index;
       var temparr = this.datalist[index];
       temparr[3] = 1;
       this.$set(this.datalist, index, temparr);
@@ -45,7 +46,15 @@ export default {
       temparr[3] = 0;
       this.$set(this.datalist, index, temparr);
     },
-  },
+    editItem: function(item) {
+      this.$parent.editMode = true;
+      this.$parent.newItemName = item[1];
+      this.$parent.newItemDueDate = item[2];
+    },
+    deleteItem: function(item) {
+      this.$parent.deleteItem(item);
+    }
+  }
 };
 </script>
 
@@ -60,7 +69,6 @@ ul {
   padding: 0;
 }
 li {
-  display: inline-block;
   margin: 0 10px;
 }
 a {

@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <img width="25%" src="./assets/logo.png">
     <Todo :datalist="list"/>
     <p v-if="newItemName">{{ newItemName }}  {{ newItemDueDate }}</p>
     <label>Task Name</label><input v-model="newItemName">
   <label>Due Date</label><input v-model="newItemDueDate">
-  <button v-on:click="addNew">Add</button>
+  <button v-show="!editMode" v-on:click="addNew">Add</button>
+  <button v-show="editMode" v-on:click="saveItem">Save</button>
   </div>
 </template>
 
@@ -30,7 +30,9 @@ export default {
     return {
       list: [],
             newItemName:'',
-	newItemDueDate:''
+	newItemDueDate:'',
+  currentItem:-1,
+  editMode:false
     };
   },
   beforeMount: function() {
@@ -47,20 +49,7 @@ export default {
     //this.list=db.task.toArray();
   },
   methods: {
-    taskMouseover: function(item) {
-      console.log('mouse over');
-      var index = this.list.indexOf(item);
-      var temparr = this.list[index];
-      temparr[3] = 1;
-      this.$set(this.list, index, temparr);
-    },
-    taskMouseout: function(item) {
-      console.log('mouse out');
-      var index = this.list.indexOf(item);
-      var temparr = this.list[index];
-      temparr[3] = 0;
-      this.$set(this.list, index, temparr);
-    },
+
     addNew: function() {
       //this.list.push(this.newItem);
       var vapp = this;
@@ -75,9 +64,27 @@ export default {
           vapp.newItemDueDate = "";
         });
     },
+    saveItem: function(){
+      //console.log(this.currentItem);
+      var vueapp = this;
+      var temparr = this.list[this.currentItem];
+      temparr[1] = this.newItemName;
+      temparr[2] = this.newItemDueDate;
+      db.task.update(temparr[0], {name: this.newItemName, duedate:this.newItemDueDate}).then(function (updated) {
+  if (updated)
+    {
+      vueapp.$set(vueapp.list, vueapp.currentItem, temparr);
+      vueapp.newItemName = "";
+      vueapp.newItemDueDate = "";
+    }
+  else
+   console.log ("Nothing was updated - there were no friend with primary key: 2");
+});
+    this.editMode = false;  
+    },
     deleteItem: function(item) {
       var index = this.list.indexOf(item);
-      var vueapp = this.vueapp;
+      var vueapp = this;
       db.task
         .where("id")
         .equals(item[0])
@@ -101,3 +108,10 @@ export default {
   margin-top: 60px;
 }
 </style>
+<style scoped>
+p {
+color:#ffffff;
+background-color:#008080
+}
+</style>
+
